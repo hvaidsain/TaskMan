@@ -1,0 +1,30 @@
+#admin routes
+
+POST /admin/login
+
+POST /admin/workspace/
+POST /admin/users
+POST /admin/team/
+POST /admin/project/
+POST /admin/task/:id  //id param : project id
+
+GET /admin/projects/
+GET /admin/projects/:id  // id param : project id
+GET /admin/tasks
+GET /admin/tasks/:id     // task id
+GET /admin/teams
+GET /admin/teams/:id    //team id
+GET /admin/workspace/
+GET /admin/workspace/:id    //workspace
+
+PUT /admin/tasks/:id      //task id
+PUT /admin/projects/:id   //project id
+PUT /admin/users/:id      //user id
+PUT /admin/teams/:id      //team id
+
+
+DELETE /admin/projects/:id
+DELETE /admin/tasks/:id
+DELETE /admin/workspace/:id
+DELETE /admin/users/:id
+DELETE /admin/teams/:id

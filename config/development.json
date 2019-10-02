@@ -1,0 +1,5 @@
+{
+  "db": {
+    "connection-string": "mongodb://192.168.0.139:27017/taskman"
+  }
+}
