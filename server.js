@@ -5,6 +5,8 @@ const morgan = require("morgan");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const adminRouter = require("./routes/adminRoutes");
+const userRouter = require("./routes/userRoutes");
 
 // constants
 const PORT = process.env.PORT || 3000;
@@ -22,6 +24,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.send("<h1>server running</h1>");
 });
+
+app.use("/admin", adminRouter);
+app.use("/users", userRouter);
 
 // mongo connection and server
 const server = async () => {

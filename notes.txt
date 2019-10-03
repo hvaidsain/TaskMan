@@ -2,9 +2,9 @@
 
 POST /admin/login
 
-POST /admin/workspace/
-POST /admin/users
-POST /admin/team/
+POST /admin/workspace   //add workspace
+POST /admin/users       //add users
+POST /admin/team/       //add team
 POST /admin/project/
 POST /admin/task/:id  //id param : project id
 
@@ -28,3 +28,15 @@ DELETE /admin/tasks/:id
 DELETE /admin/workspace/:id
 DELETE /admin/users/:id
 DELETE /admin/teams/:id
+
+
+## user routes
+
+GET /users/tasks/:id  //project id  there is reln betwn user and project
+
+PUT /users/tasks/:id  //project id
+
+
+
+
+
