@@ -44,11 +44,51 @@ router.route("/team").get(auth, isAdmin, getAdminDataController.getAllTeams);
 router
   .route("/team/:id")
   .get(auth, isAdmin, getAdminDataController.getTeamById);
+router.route("/task").get(auth, isAdmin, getAdminDataController.getAllTask);
 router
   .route("/project/task/:id")
   .get(auth, isAdmin, getAdminDataController.getAllTasksByProject); //param id would be the project id
 router
   .route("/task/:id")
   .get(auth, isAdmin, getAdminDataController.getTaskById); //Not usefull in current scenario
+
+router.route("/user").get(auth, isAdmin, getAdminDataController.getAllUsers);
+router
+  .route("/user/:id")
+  .get(auth, isAdmin, getAdminDataController.getUserById);
+
+//Delete Admin data controllers
+
+router
+  .route("/workspace/:id")
+  .delete(auth, isAdmin, deleteAdminDataController.deleteWorkspaceById);
+router
+  .route("/team/:id")
+  .delete(auth, isAdmin, deleteAdminDataController.deleteTeamById);
+
+router
+  .route("/task/:id")
+  .delete(auth, isAdmin, deleteAdminDataController.deleteTaskById);
+
+router
+  .route("/project/:id")
+  .delete(auth, isAdmin, deleteAdminDataController.deleteProjectById);
+
+//Update Admin data controllers
+
+router
+  .route("/workspace/:id")
+  .put(auth, isAdmin, updateAdminDataController.updateWorkspace);
+router
+  .route("/User/:id")
+  .put(auth, isAdmin, updateAdminDataController.updateUser);
+
+router
+  .route("/Team/:id")
+  .put(auth, isAdmin, updateAdminDataController.updateTeam);
+
+router
+  .route("/Task/:id")
+  .put(auth, isAdmin, updateAdminDataController.updateTask);
 
 module.exports = router;
