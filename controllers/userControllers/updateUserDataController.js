@@ -1,18 +1,18 @@
 const { User } = require("../../models/user");
 const Workspace = require("../../models/workspace");
-const Project = require("../../models/project");
+const { Project } = require("../../models/project");
 const Team = require("../../models/team");
-const Task = require("../../models/task");
+const { Task } = require("../../models/task");
 
 exports.updateTaskStatus = async (req, res) => {
   try {
     const _id = req.params.id;
-    console.log(req.body.flag);
+    const update = { flag: req.body.flag };
     if (req.body.flag == "completed") {
-      const updatedTask = await Task.findByIdAndUpdate(_id, req.body, {
+      const updatedTask = await Task.findByIdAndUpdate(_id, update, {
         new: true
       });
-      res.send({ updatedTask });
+      res.send(updatedTask);
     }
   } catch (e) {
     console.log(e);

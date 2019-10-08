@@ -14,7 +14,8 @@ const validateUser = user => {
     isAdmin: Joi.boolean(),
     password: Joi.string()
       .min(3)
-      .required()
+      .required(),
+    teamId: Joi.string().required()
   });
   return Joi.validate(user, schema);
 };
@@ -24,7 +25,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true },
   password: { type: String, required: true },
   teamId: { type: mongoose.Schema.Types.ObjectId, ref: "team" },
-  projectId: { type: mongoose.Schema.Types.ObjectId, ref: "project" },
+  // projectId: { type: mongoose.Schema.Types.ObjectId, ref: "project" },
   isAdmin: { type: Boolean, default: false }
 });
 

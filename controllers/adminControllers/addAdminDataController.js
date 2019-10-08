@@ -1,9 +1,10 @@
 const { validateUser, User } = require("../../models/user");
 const Workspace = require("../../models/workspace");
-const Project = require("../../models/project");
+const { Project, validateProject } = require("../../models/project");
 const Team = require("../../models/team");
-const Task = require("../../models/task");
+const { Task, validateTask } = require("../../models/task");
 const { createHash, compareHash } = require("../../helpers/hash");
+const Message = require("../../models/message");
 
 exports.addUser = async (req, res) => {
   try {
@@ -39,6 +40,10 @@ exports.addWorkspace = async (req, res) => {
 
 exports.addProject = async (req, res) => {
   try {
+    const { error } = validateProject(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
     let projectDetails = req.body;
 
     const workspace = await Workspace.findOne({
@@ -63,7 +68,17 @@ exports.addProject = async (req, res) => {
 
 exports.addTask = async (req, res) => {
   try {
+    const { error } = validateTask(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+
     let task = req.body;
+
+    if (task.endTime < task.startTime) {
+      return res.status(400).send({ message: "endtime shud be greater" });
+    }
+
     const project = await Project.findOne({ _id: task.projectId });
 
     if (!project) {
@@ -81,12 +96,12 @@ exports.addTask = async (req, res) => {
 exports.addTeam = async (req, res) => {
   try {
     let team = req.body;
-    const user = await User.findOne({ _id: { $in: team.users } });
+    // const user = await User.findOne({ _id: { $in: team.users } });
     const workspace = await Workspace.findOne({ _id: team.workspace });
     const teamName = await Team.findOne({ name: team.name });
 
-    if (!user || !workspace) {
-      return res.status(404).send({ message: "Bad Request" });
+    if (!workspace) {
+      return res.status(404).send({ message: "No Workspace Found" });
     }
 
     if (teamName) {
@@ -96,6 +111,26 @@ exports.addTeam = async (req, res) => {
     const newTeam = await Team.create(req.body);
 
     res.status(201).send(newTeam);
+  } catch (e) {
+    console.log(e);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+};
+
+exports.addMessages = async (req, res) => {
+  try {
+    const projectId = req.params.id;
+    const project = await Project.find({ _id: projectId });
+    if (!project) {
+      res.status(404).send({ message: "No project found" });
+    }
+    let messageBody = req.body;
+
+    messageBody.userId = req.user._id;
+    messageBody.projectId = projectId;
+
+    const newMessage = await Message.create(messageBody);
+    res.send(newMessage);
   } catch (e) {
     console.log(e);
     res.status(500).send({ message: "Internal Server Error" });

@@ -1,6 +1,21 @@
 const mongoose = require("mongoose");
 const Joi = require("@hapi/joi");
 
+const validateProject = project => {
+  const schema = Joi.object().keys({
+    name: Joi.string()
+      .min(3)
+      .required(),
+    priority: Joi.number()
+      .integer()
+      .min(1)
+      .max(10),
+    teamId: Joi.string().required(),
+    workspace: Joi.string().required()
+  });
+  return Joi.validate(project, schema);
+};
+
 const projectSchema = new mongoose.Schema({
   name: { type: String, required: true },
   // startTime: { type: Date, default: Date.now },
@@ -21,4 +36,4 @@ const projectSchema = new mongoose.Schema({
 
 const Project = mongoose.model("project", projectSchema);
 
-module.exports = Project;
+module.exports = { Project, validateProject };

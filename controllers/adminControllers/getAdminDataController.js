@@ -1,8 +1,8 @@
 const { User } = require("../../models/user");
 const Workspace = require("../../models/workspace");
-const Project = require("../../models/project");
+const { Project } = require("../../models/project");
 const Team = require("../../models/team");
-const Task = require("../../models/task");
+const { Task } = require("../../models/task");
 
 exports.getAllWorkspace = async (req, res) => {
   try {
@@ -16,7 +16,7 @@ exports.getAllWorkspace = async (req, res) => {
 
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find().populate("teamId");
     res.send(users);
   } catch (e) {
     console.log(e);
@@ -78,7 +78,7 @@ exports.getProjectById = async (req, res) => {
 
 exports.getAllTeams = async (req, res) => {
   try {
-    const teams = await Team.find({}).populate("users");
+    const teams = await Team.find({}).populate("workspace");
     res.send(teams);
   } catch (e) {
     console.log(e);
@@ -105,7 +105,7 @@ exports.getTeamById = async (req, res) => {
 
 exports.getAllTask = async (req, res) => {
   try {
-    const task = await Task.find();
+    const task = await Task.find().sort({ startTime: "asc" });
     res.send(task);
   } catch (e) {
     console.log(e);
@@ -122,11 +122,44 @@ exports.getAllTasksByProject = async (req, res) => {
     if (!project) {
       return res.status(404).send({ message: "Project does not exist" });
     }
-    const tasks = await Task.find({ projectId: _id });
+    now = new Date();
+    const tasks = await Task.find({ projectId: _id })
+      .populate([
+        { path: "userId", model: "user" },
+        { path: "projectId", model: "project" }
+      ])
+
+      .sort({ startTime: "asc" });
+
+    for (let x in tasks) {
+      if (tasks[x].endTime < now && tasks[x].flag != "completed") {
+        tasks[x].flag = "delayed";
+      }
+    }
+
+    // console.log(tasks);
     res.send(tasks);
   } catch (e) {
     console.log(e);
     res.status(500).send({ message: "Internal Server Error" });
+  }
+};
+
+exports.getMemberOfTeam = async (req, res) => {
+  try {
+    console.log(req.user);
+    const projectId = req.params.id;
+    const project = await Project.findOne({ _id: projectId });
+    if (!project) {
+      return res.status(404).send({ message: "Project not found" });
+    }
+    const teamId = project.teamId;
+    const users = await User.find({ teamId });
+
+    res.send(users);
+  } catch (e) {
+    console.log(e);
+    res.status(500).send({ message: "Internal Server error" });
   }
 };
 
@@ -140,6 +173,23 @@ exports.getTaskById = async (req, res) => {
     res.send(task);
   } catch (e) {
     console.log(e);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+};
+
+exports.getProjectsByWorkspace = async (req, res) => {
+  try {
+    const _id = req.params.id;
+    const workspace = await Workspace.find({ _id: _id });
+    if (!workspace) {
+      res.status(404).send({ message: "No workspace found" });
+    }
+
+    const projects = await Project.find({ workspace: _id }).populate("teamId");
+    res.send(projects);
+  } catch (e) {
+    console.log(e);
+
     res.status(500).send({ message: "Internal Server Error" });
   }
 };

@@ -24,6 +24,9 @@ router
 router.route("/project").post(auth, isAdmin, addAdminDataController.addProject);
 router.route("/team").post(auth, isAdmin, addAdminDataController.addTeam);
 router.route("/task").post(auth, isAdmin, addAdminDataController.addTask);
+router
+  .route("/message/:id") //id : project id
+  .post(auth, addAdminDataController.addMessages);
 
 //get admin data controllers
 
@@ -56,6 +59,14 @@ router.route("/user").get(auth, isAdmin, getAdminDataController.getAllUsers);
 router
   .route("/user/:id")
   .get(auth, isAdmin, getAdminDataController.getUserById);
+
+router
+  .route("/team/users/:id")
+  .get(auth, isAdmin, getAdminDataController.getMemberOfTeam); //param id is project id
+
+router
+  .route("/workspace/projects/:id")
+  .get(auth, isAdmin, getAdminDataController.getProjectsByWorkspace); //param id is workspace id
 
 //Delete Admin data controllers
 

@@ -12,4 +12,6 @@ router.route("/task/:id").get(auth, getUserDataController.getUserTasks); //param
 
 router.route("/task/:id").put(auth, updateUserDataController.updateTaskStatus);
 
+router.route("/message/:id").get(auth, getUserDataController.getMessages); //id would be the team id
+
 module.exports = router;
