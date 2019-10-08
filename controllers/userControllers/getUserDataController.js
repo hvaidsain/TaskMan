@@ -35,8 +35,13 @@ exports.getUserTasks = async (req, res) => {
 exports.getMessages = async (req, res) => {
   try {
     const _id = req.params.id;
+
+    if (_id != req.user.teamId) {
+      return res.status(401).send({ message: "Unauhorized:Not your team" });
+    }
+
     const team = await Team.findOne({ _id });
-    console.log(team);
+    // console.log(team);
     if (!team) {
       return res.status(404).send({ message: "No team found" });
     }
@@ -44,7 +49,7 @@ exports.getMessages = async (req, res) => {
     const project = await Project.findOne({ teamId: _id });
     projectId = project._id;
     // console.log(projectId);
-    const message = await Message.find({ projectId });
+    const message = await Message.find({ projectId }).populate("userId");
     res.send(message);
   } catch (e) {
     console.log(e);

@@ -8,6 +8,16 @@ exports.updateTaskStatus = async (req, res) => {
   try {
     const _id = req.params.id;
     const update = { flag: req.body.flag };
+
+    const task = await Task.findById(_id);
+
+    console.log(task.userId);
+    console.log(req.user._id);
+
+    if (task.userId.toString() != req.user._id.toString()) {
+      return res.status(401).send({ message: "Not allowed" });
+    }
+
     if (req.body.flag == "completed") {
       const updatedTask = await Task.findByIdAndUpdate(_id, update, {
         new: true
